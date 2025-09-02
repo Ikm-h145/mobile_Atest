@@ -44,8 +44,12 @@ public class MainActivity extends AppCompatActivity {
         binding.button2.setOnClickListener(view ->{
             var text1 = binding.editTextText.getText().toString();
             prefDataStore.setString("name",text1);
-
         });
-
     }
+    protected void onStart() {
+        super.onStart();
+        prefDataStore.getString("name")
+                .ifPresent(name -> binding.text.setText(name));
+    }
+
 }
