@@ -1,6 +1,9 @@
 package jp.ac.meijou.android.s241205145;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,17 +11,45 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import jp.ac.meijou.android.s241205145.databinding.ActivityMainBinding;
+
 public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding binding;
+    private PrefDataStore prefDataStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        TextView text = findViewById((R.id.text));
+        text.setText(R.string.text);
+        binding.text.setText(R.string.app_name);
+
+        binding.button.setOnClickListener(view -> {
+            var text1 = binding.editTextText.getText().toString();
+            binding.text.setText(text1);
+        });
+
+        prefDataStore = PrefDataStore.getInstance(this);
+
+        binding.button2.setOnClickListener(view ->{
+            var text1 = binding.editTextText.getText().toString();
+            prefDataStore.setString("name",text1);
+        });
     }
+    protected void onStart() {
+        super.onStart();
+        prefDataStore.getString("name")
+                .ifPresent(name -> binding.text.setText(name));
+    }
+
 }
